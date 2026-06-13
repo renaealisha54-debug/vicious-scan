@@ -1,0 +1,179 @@
+VICIOUS SCAN REPORT
+============================================================
+Date         : Sat Jun 13 14:55:57 EDT 2026
+Target       : /data/data/com.termux/files/home/storage/downloads/vicious-scan-fixed
+Project Type : ANDROID
+Files Scanned: 17
+Total Findings: 27
+
+REQUIRED (22)
+============================================================
+
+[ android.permission.ACCESS_FINE_LOCATION ]
+  Type   : PERMISSION
+  Reason : LocationManager detected — fine location permission required.
+  Snippet:
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+[ android.permission.ACCESS_COARSE_LOCATION ]
+  Type   : PERMISSION
+  Reason : getLastKnownLocation requires at minimum coarse location.
+  Snippet:
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+[ android.permission.CAMERA ]
+  Type   : PERMISSION
+  Reason : Camera API usage detected.
+  Snippet:
+<uses-permission android:name="android.permission.CAMERA" />
+
+[ android.permission.BLUETOOTH_CONNECT ]
+  Type   : PERMISSION
+  Reason : BluetoothAdapter requires BLUETOOTH_CONNECT on API 31+.
+  Snippet:
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+[ android.permission.ACCESS_WIFI_STATE ]
+  Type   : PERMISSION
+  Reason : WifiManager usage detected.
+  Snippet:
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+[ android.permission.ACCESS_NETWORK_STATE ]
+  Type   : PERMISSION
+  Reason : ConnectivityManager requires network state permission.
+  Snippet:
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+[ android.permission.VIBRATE ]
+  Type   : PERMISSION
+  Reason : Vibrator API usage detected.
+  Snippet:
+<uses-permission android:name="android.permission.VIBRATE" />
+
+[ android.permission.RECORD_AUDIO ]
+  Type   : PERMISSION
+  Reason : AudioRecord requires microphone permission.
+  Snippet:
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+[ android.permission.READ_MEDIA_IMAGES ]
+  Type   : PERMISSION
+  Reason : Reading MediaStore images requires READ_MEDIA_IMAGES on API 33+.
+  Snippet:
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+[ android.permission.READ_CONTACTS ]
+  Type   : PERMISSION
+  Reason : ContactsContract usage detected.
+  Snippet:
+<uses-permission android:name="android.permission.READ_CONTACTS" />
+
+[ android.permission.POST_NOTIFICATIONS ]
+  Type   : PERMISSION
+  Reason : Posting notifications requires POST_NOTIFICATIONS on API 33+.
+  Snippet:
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+[ android.permission.INTERNET ]
+  Type   : PERMISSION
+  Reason : HTTP networking detected — INTERNET permission required.
+  Snippet:
+<uses-permission android:name="android.permission.INTERNET" />
+
+[ androidx.navigation:navigation-compose ]
+  Type   : GRADLE_DEP
+  Reason : NavHost/NavController usage detected.
+  Snippet:
+implementation("androidx.navigation:navigation-compose:2.7.7")
+
+[ lifecycle-viewmodel-compose ]
+  Type   : GRADLE_DEP
+  Reason : viewModel() composable requires lifecycle-viewmodel-compose.
+  Snippet:
+implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+
+[ androidx.room ]
+  Type   : GRADLE_DEP
+  Reason : Room database usage detected.
+  Snippet:
+implementation("androidx.room:room-runtime:2.6.1")
+implementation("androidx.room:room-ktx:2.6.1")
+ksp("androidx.room:room-compiler:2.6.1")
+
+[ com.google.dagger:hilt-android ]
+  Type   : GRADLE_DEP
+  Reason : Hilt DI usage detected.
+  Snippet:
+implementation("com.google.dagger:hilt-android:2.51.1")
+ksp("com.google.dagger:hilt-compiler:2.51.1")
+
+[ io.coil-kt:coil-compose ]
+  Type   : GRADLE_DEP
+  Reason : Coil image loading detected.
+  Snippet:
+implementation("io.coil-kt:coil-compose:2.6.0")
+
+[ com.google.code.gson:gson ]
+  Type   : GRADLE_DEP
+  Reason : Gson detected.
+  Snippet:
+implementation("com.google.code.gson:gson:2.10.1")
+
+[ com.squareup.moshi:moshi-kotlin ]
+  Type   : GRADLE_DEP
+  Reason : Moshi detected.
+  Snippet:
+implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+
+[ androidx.work:work-runtime-ktx ]
+  Type   : GRADLE_DEP
+  Reason : WorkManager usage detected.
+  Snippet:
+implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+[ androidx.datastore:datastore-preferences ]
+  Type   : GRADLE_DEP
+  Reason : DataStore usage detected.
+  Snippet:
+implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+[ Unfinished TODO() ]
+  Type   : GENERIC
+  Reason : TODO() throws NotImplementedError at runtime — resolve before shipping.
+  Snippet:
+# Remove or implement all TODO() calls
+
+RECOMMENDED (2)
+============================================================
+
+[ kotlinx-coroutines-android ]
+  Type   : GRADLE_DEP
+  Reason : Coroutines usage detected.
+  Snippet:
+implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+
+[ kotlinx-coroutines-core ]
+  Type   : GRADLE_DEP
+  Reason : Kotlin Flow usage detected.
+  Snippet:
+implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+
+OPTIONAL (3)
+============================================================
+
+[ Debug Logging ]
+  Type   : GENERIC
+  Reason : Debug log calls found — strip before release.
+
+[ System.out.println ]
+  Type   : GENERIC
+  Reason : Replace with proper logging in production.
+
+[ Direct File I/O ]
+  Type   : GENERIC
+  Reason : Direct File I/O — consider Scoped Storage / SAF on Android.
+
+============================================================
+Generated by Vicious Scan CLI
+
