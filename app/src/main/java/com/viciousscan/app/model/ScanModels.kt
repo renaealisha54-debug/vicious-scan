@@ -39,3 +39,15 @@ enum class ProjectType {
     GENERIC,
     UNKNOWN
 }
+
+data class ScanHistoryEntry(
+    val id: String,
+    val timestamp: Long,
+    val targetPath: String,
+    val projectType: ProjectType,
+    val totalFindings: Int,
+    val requiredCount: Int,
+    val recommendedCount: Int,
+    val optionalCount: Int,
+    val findings: List<ScanFinding>
+)
