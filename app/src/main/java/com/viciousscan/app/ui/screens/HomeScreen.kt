@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.InsertDriveFile
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +26,8 @@ import com.viciousscan.app.ui.theme.*
 @Composable
 fun HomeScreen(
     onFolderSelected: (Uri) -> Unit,
-    onFileSelected: (Uri, String) -> Unit
+    onFileSelected: (Uri, String) -> Unit,
+    onShowHistory: () -> Unit
 ) {
     val folderLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocumentTree()
@@ -76,6 +78,17 @@ fun HomeScreen(
         )
 
         Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+        OutlinedButton(
+            onClick = onShowHistory,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = com.viciousscan.app.ui.theme.ViciousRed)
+        ) {
+            androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.History, contentDescription = null)
+            Spacer(modifier = Modifier.width(12.dp))
+            Text("SCAN HISTORY", fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, letterSpacing = 2.sp)
+        }
 
         // Scan folder button
         Button(
