@@ -8,7 +8,10 @@ data class ScanFinding(
     val type: FindingType,
     val reason: String,
     val severity: Severity = Severity.RECOMMENDED,
-    val autoFixSnippet: String? = null   // null = manual-only
+    val autoFixSnippet: String? = null,   // null = manual-only
+    val codeSnippet: String? = null,      // actual line(s) from source
+    val sourceFile: String? = null,       // file where trigger was found
+    val sourceLine: Int? = null           // line number of trigger
 )
 
 enum class FindingType {

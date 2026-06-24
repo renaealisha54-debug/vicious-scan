@@ -8,6 +8,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +30,10 @@ import com.viciousscan.app.ui.theme.*
 fun ResultsScreen(
     report: ScanReport,
     onAutoPatch: () -> Unit,
-    onReset: () -> Unit
+    onReset: () -> Unit,
+    onExportReadme: (() -> Unit)? = null,
+    onExportRaw: (() -> Unit)? = null,
+    onProjectInfo: (() -> Unit)? = null
 ) {
     val required     = report.findings.filter { it.severity == Severity.REQUIRED }
     val recommended  = report.findings.filter { it.severity == Severity.RECOMMENDED }
@@ -117,6 +125,54 @@ fun ResultsScreen(
             if (optional.isNotEmpty()) {
                 item { SectionHeader("OPTIONAL", ViciousMuted, optional.size) }
                 items(optional) { FindingCard(it) }
+            }
+
+            // Export buttons
+            item {
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (onExportReadme != null) {
+                        OutlinedButton(
+                            onClick = onExportReadme,
+                            modifier = Modifier.weight(1f),
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp)
+                        ) {
+                            Icon(Icons.Default.FileDownload, null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("AI README", fontFamily = FontFamily.Monospace,
+                                fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                        }
+                    }
+                    if (onExportRaw != null) {
+                        OutlinedButton(
+                            onClick = onExportRaw,
+                            modifier = Modifier.weight(1f),
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp)
+                        ) {
+                            Icon(Icons.Default.FileDownload, null, modifier = Modifier.size(16.dp))
+                            Spacer(Modifier.width(4.dp))
+                            Text("RAW CODE", fontFamily = FontFamily.Monospace,
+                                fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                        }
+                    }
+                }
+                if (onProjectInfo != null) {
+                    Spacer(Modifier.height(4.dp))
+                    OutlinedButton(
+                        onClick = onProjectInfo,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp)
+                    ) {
+                        Icon(Icons.Default.Settings, null, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text("PROJECT INFO", fontFamily = FontFamily.Monospace,
+                            fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
             }
 
             item { Spacer(Modifier.height(24.dp)) }

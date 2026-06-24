@@ -4,10 +4,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 
-/**
- * Reads source files from a SAF (Storage Access Framework) tree URI.
- * Returns a map of relative path → file content for all supported extensions.
- */
 object FileReader {
 
     private val SUPPORTED_EXTENSIONS = setOf(
@@ -16,20 +12,16 @@ object FileReader {
         "swift", "dart", "rb", "go", "rs", "toml", "yaml", "yml"
     )
 
-    /**
-     * Walk [treeUri] recursively and read all supported source files.
-     * Returns an empty map if the URI is not a directory tree.
-     */
+    private const val MAX_FILES = 500
+    private const val MAX_DEPTH = 10
+
     fun readTree(context: Context, treeUri: Uri): Map<String, String> {
         val root = DocumentFile.fromTreeUri(context, treeUri) ?: return emptyMap()
         val result = mutableMapOf<String, String>()
-        walkDocument(context, root, "", result)
+        walkDocument(context, root, "", result, 0)
         return result
     }
 
-    /**
-     * Read a single file URI.
-     */
     fun readSingleFile(context: Context, uri: Uri, displayName: String): Map<String, String> {
         val ext = displayName.substringAfterLast('.', "").lowercase()
         if (ext !in SUPPORTED_EXTENSIONS) return emptyMap()
@@ -47,13 +39,18 @@ object FileReader {
         context: Context,
         dir: DocumentFile,
         path: String,
-        result: MutableMap<String, String>
+        result: MutableMap<String, String>,
+        depth: Int
     ) {
+        if (depth > MAX_DEPTH) return
+        if (result.size >= MAX_FILES) return
+
         for (child in dir.listFiles()) {
+            if (result.size >= MAX_FILES) return
             val childPath = if (path.isEmpty()) child.name ?: continue
-                           else "$path/${child.name ?: continue}"
+                            else "$path/${child.name ?: continue}"
             when {
-                child.isDirectory -> walkDocument(context, child, childPath, result)
+                child.isDirectory -> walkDocument(context, child, childPath, result, depth + 1)
                 child.isFile -> {
                     val ext = childPath.substringAfterLast('.', "").lowercase()
                     if (ext in SUPPORTED_EXTENSIONS) {
@@ -63,7 +60,7 @@ object FileReader {
                                 ?.bufferedReader()
                                 ?.readText() ?: continue
                             result[childPath] = content
-                        } catch (_: Exception) { /* skip unreadable files */ }
+                        } catch (_: Exception) { }
                     }
                 }
             }

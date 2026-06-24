@@ -8,6 +8,10 @@ import com.viciousscan.app.model.*
 import com.viciousscan.app.scanner.AutoPatcher
 import com.viciousscan.app.scanner.FileReader
 import com.viciousscan.app.scanner.ScanEngine
+import com.viciousscan.app.model.ProjectInfo
+import com.viciousscan.app.model.ProjectInfoRepository
+import com.viciousscan.app.scanner.ReportGenerator
+import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +39,16 @@ sealed class HistoryUiState {
     data class ViewingEntry(val entry: ScanHistoryEntry) : HistoryUiState()
 }
 
+sealed class ExportUiState {
+    object Idle : ExportUiState()
+    data class Done(val content: String, val fileName: String) : ExportUiState()
+}
+
+sealed class ProjectInfoUiState {
+    object Hidden : ProjectInfoUiState()
+    data class Editing(val info: ProjectInfo) : ProjectInfoUiState()
+}
+
 class ScanViewModel(app: Application) : AndroidViewModel(app) {
     private val _scanState = MutableStateFlow<ScanUiState>(ScanUiState.Idle)
     val scanState: StateFlow<ScanUiState> = _scanState
@@ -44,6 +58,12 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
 
     private val _historyState = MutableStateFlow<HistoryUiState>(HistoryUiState.Hidden)
     val historyState: StateFlow<HistoryUiState> = _historyState
+
+    private val _exportState = MutableStateFlow<ExportUiState>(ExportUiState.Idle)
+    val exportState: StateFlow<ExportUiState> = _exportState
+
+    private val _projectInfoState = MutableStateFlow<ProjectInfoUiState>(ProjectInfoUiState.Hidden)
+    val projectInfoState: StateFlow<ProjectInfoUiState> = _projectInfoState
 
     private var manifestUri: Uri? = null
     private var gradleUri: Uri? = null
@@ -158,6 +178,44 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
             _patchState.value = PatchUiState.Done(ok, fail)
         }
     }
+
+    fun showProjectInfo() {
+        val ctx = getApplication<Application>()
+        _projectInfoState.value = ProjectInfoUiState.Editing(ProjectInfoRepository.load(ctx))
+    }
+
+    fun saveProjectInfo(info: ProjectInfo) {
+        val ctx = getApplication<Application>()
+        ProjectInfoRepository.save(ctx, info)
+        _projectInfoState.value = ProjectInfoUiState.Hidden
+    }
+
+    fun hideProjectInfo() { _projectInfoState.value = ProjectInfoUiState.Hidden }
+
+    fun exportAiReadme() {
+        val s = _scanState.value as? ScanUiState.Results ?: return
+        val ctx = getApplication<Application>()
+        val info = ProjectInfoRepository.load(ctx)
+        val content = ReportGenerator.generateAiReadme(s.report, info)
+        _exportState.value = ExportUiState.Done(content, "ai-brief.md")
+    }
+
+    fun exportRawTemplate() {
+        val s = _scanState.value as? ScanUiState.Results ?: return
+        val ctx = getApplication<Application>()
+        val info = ProjectInfoRepository.load(ctx)
+        val content = ReportGenerator.generateRawTemplate(s.report, info)
+        _exportState.value = ExportUiState.Done(content, "raw-template.md")
+    }
+
+    fun saveExportToFile(ctx: Context, content: String, fileName: String): String {
+        val file = java.io.File(ctx.getExternalFilesDir(null), fileName)
+        file.writeText(content)
+        _exportState.value = ExportUiState.Idle
+        return file.absolutePath
+    }
+
+    fun resetExport() { _exportState.value = ExportUiState.Idle }
 
     fun resetScan() { _scanState.value = ScanUiState.Idle; _patchState.value = PatchUiState.Idle }
     fun resetPatch() { _patchState.value = PatchUiState.Idle }

@@ -347,10 +347,22 @@ ksp("com.google.dagger:hilt-compiler:2.51.1")"""
         val seen = mutableSetOf<String>()
         val findings = mutableListOf<ScanFinding>()
 
-        for ((_, content) in files) {
+        for ((fileName, content) in files) {
+            val lines = content.lines()
             for (rule in rules) {
                 if (rule.trigger in content && seen.add(rule.finding.name)) {
-                    findings.add(rule.finding)
+                    // Find the line number and snippet
+                    val lineIndex = lines.indexOfFirst { rule.trigger in it }
+                    val snippet = if (lineIndex >= 0) {
+                        val start = maxOf(0, lineIndex - 1)
+                        val end = minOf(lines.size - 1, lineIndex + 1)
+                        lines.subList(start, end + 1).joinToString("\n")
+                    } else null
+                    findings.add(rule.finding.copy(
+                        sourceFile = fileName,
+                        sourceLine = if (lineIndex >= 0) lineIndex + 1 else null,
+                        codeSnippet = snippet
+                    ))
                 }
             }
         }

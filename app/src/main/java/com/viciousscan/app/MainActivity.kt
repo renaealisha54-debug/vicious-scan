@@ -14,6 +14,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.viciousscan.app.model.ScanReport
@@ -25,6 +26,9 @@ import com.viciousscan.app.ui.theme.ViciousRed
 import com.viciousscan.app.ui.theme.ViciousScanTheme
 import com.viciousscan.app.ui.theme.ViciousSurface
 import com.viciousscan.app.viewmodel.HistoryUiState
+import com.viciousscan.app.viewmodel.ProjectInfoUiState
+import com.viciousscan.app.viewmodel.ExportUiState
+import com.viciousscan.app.ui.screens.ProjectInfoScreen
 import com.viciousscan.app.viewmodel.PatchUiState
 import com.viciousscan.app.viewmodel.ScanUiState
 import com.viciousscan.app.viewmodel.ScanViewModel
@@ -42,7 +46,20 @@ fun ViciousScanApp(vm: ScanViewModel = viewModel()) {
     val scanState    by vm.scanState.collectAsStateWithLifecycle()
     val patchState   by vm.patchState.collectAsStateWithLifecycle()
     val historyState by vm.historyState.collectAsStateWithLifecycle()
-    val snackbar     = remember { SnackbarHostState() }
+    val exportState      by vm.exportState.collectAsStateWithLifecycle()
+    val projectInfoState by vm.projectInfoState.collectAsStateWithLifecycle()
+    val snackbar         = remember { SnackbarHostState() }
+    val scope            = rememberCoroutineScope()
+    val ctx              = androidx.compose.ui.platform.LocalContext.current
+
+    LaunchedEffect(exportState) {
+        if (exportState is ExportUiState.Done) {
+            val d = exportState as ExportUiState.Done
+            val path = vm.saveExportToFile(ctx, d.content, d.fileName)
+            snackbar.showSnackbar("Saved: $path")
+            vm.resetExport()
+        }
+    }
 
     LaunchedEffect(patchState) {
         if (patchState is PatchUiState.Error) {
@@ -112,7 +129,10 @@ fun ViciousScanApp(vm: ScanViewModel = viewModel()) {
                     else -> ResultsScreen(
                         report = s.report,
                         onAutoPatch = { vm.buildPatchPreviews() },
-                        onReset = { vm.resetScan() }
+                        onReset = { vm.resetScan() },
+                        onExportReadme = { vm.exportAiReadme() },
+                        onExportRaw = { vm.exportRawTemplate() },
+                        onProjectInfo = { vm.showProjectInfo() }
                     )
                 }
             }
