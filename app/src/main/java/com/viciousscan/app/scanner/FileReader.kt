@@ -12,13 +12,10 @@ object FileReader {
         "swift", "dart", "rb", "go", "rs", "toml", "yaml", "yml"
     )
 
-    private const val MAX_FILES = 500
-    private const val MAX_DEPTH = 10
-
     fun readTree(context: Context, treeUri: Uri): Map<String, String> {
         val root = DocumentFile.fromTreeUri(context, treeUri) ?: return emptyMap()
         val result = mutableMapOf<String, String>()
-        walkDocument(context, root, "", result, 0)
+        walkDocument(context, root, "", result)
         return result
     }
 
@@ -39,18 +36,13 @@ object FileReader {
         context: Context,
         dir: DocumentFile,
         path: String,
-        result: MutableMap<String, String>,
-        depth: Int
+        result: MutableMap<String, String>
     ) {
-        if (depth > MAX_DEPTH) return
-        if (result.size >= MAX_FILES) return
-
         for (child in dir.listFiles()) {
-            if (result.size >= MAX_FILES) return
-            val childPath = if (path.isEmpty()) child.name ?: continue
-                            else "$path/${child.name ?: continue}"
+            val name = child.name ?: continue
+            val childPath = if (path.isEmpty()) name else "$path/$name"
             when {
-                child.isDirectory -> walkDocument(context, child, childPath, result, depth + 1)
+                child.isDirectory -> walkDocument(context, child, childPath, result)
                 child.isFile -> {
                     val ext = childPath.substringAfterLast('.', "").lowercase()
                     if (ext in SUPPORTED_EXTENSIONS) {

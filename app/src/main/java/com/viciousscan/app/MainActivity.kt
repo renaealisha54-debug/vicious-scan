@@ -13,6 +13,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -114,7 +116,7 @@ fun ViciousScanApp(vm: ScanViewModel = viewModel()) {
                     onShowHistory = { vm.showHistory() }
                 )
                 is ScanUiState.Scanning -> CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center), color = ViciousRed)
+                    modifier = Modifier.align(Alignment.Center).size(48.dp), color = ViciousRed)
                 is ScanUiState.Error -> LaunchedEffect(s) {
                     snackbar.showSnackbar(s.message); vm.resetScan()
                 }
@@ -125,7 +127,7 @@ fun ViciousScanApp(vm: ScanViewModel = viewModel()) {
                         onCancel = { vm.resetPatch() }
                     )
                     is PatchUiState.Applying -> CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center), color = ViciousRed)
+                        modifier = Modifier.align(Alignment.Center).size(48.dp), color = ViciousRed)
                     else -> ResultsScreen(
                         report = s.report,
                         onAutoPatch = { vm.buildPatchPreviews() },
