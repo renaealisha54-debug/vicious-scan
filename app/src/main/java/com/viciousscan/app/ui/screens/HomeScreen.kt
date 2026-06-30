@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +28,8 @@ import com.viciousscan.app.ui.theme.*
 fun HomeScreen(
     onFolderSelected: (Uri) -> Unit,
     onFileSelected: (Uri, String) -> Unit,
-    onShowHistory: () -> Unit
+    onShowHistory: () -> Unit,
+    onShowCatalog: () -> Unit
 ) {
     val folderLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocumentTree()
@@ -134,6 +136,23 @@ fun HomeScreen(
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 "SCAN SINGLE FILE",
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 2.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+        OutlinedButton(
+            onClick = onShowCatalog,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(4.dp),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = ViciousRed)
+        ) {
+            Icon(Icons.Default.LibraryAdd, contentDescription = null)
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                "BROWSE & INJECT",
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp

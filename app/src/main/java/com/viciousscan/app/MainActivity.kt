@@ -27,9 +27,11 @@ import com.viciousscan.app.ui.screens.ResultsScreen
 import com.viciousscan.app.ui.theme.ViciousRed
 import com.viciousscan.app.ui.theme.ViciousScanTheme
 import com.viciousscan.app.ui.theme.ViciousSurface
+import com.viciousscan.app.viewmodel.CatalogUiState
 import com.viciousscan.app.viewmodel.HistoryUiState
 import com.viciousscan.app.viewmodel.ProjectInfoUiState
 import com.viciousscan.app.viewmodel.ExportUiState
+import com.viciousscan.app.ui.screens.PermissionCatalogScreen
 import com.viciousscan.app.ui.screens.ProjectInfoScreen
 import com.viciousscan.app.viewmodel.PatchUiState
 import com.viciousscan.app.viewmodel.ScanUiState
@@ -48,6 +50,7 @@ fun ViciousScanApp(vm: ScanViewModel = viewModel()) {
     val scanState    by vm.scanState.collectAsStateWithLifecycle()
     val patchState   by vm.patchState.collectAsStateWithLifecycle()
     val historyState by vm.historyState.collectAsStateWithLifecycle()
+    val catalogState     by vm.catalogState.collectAsStateWithLifecycle()
     val exportState      by vm.exportState.collectAsStateWithLifecycle()
     val projectInfoState by vm.projectInfoState.collectAsStateWithLifecycle()
     val snackbar         = remember { SnackbarHostState() }
@@ -113,7 +116,8 @@ fun ViciousScanApp(vm: ScanViewModel = viewModel()) {
                 is ScanUiState.Idle -> HomeScreen(
                     onFolderSelected = { vm.scanFolder(it) },
                     onFileSelected = { uri, name -> vm.scanSingleFile(uri, name) },
-                    onShowHistory = { vm.showHistory() }
+                    onShowHistory = { vm.showHistory() },
+                    onShowCatalog = { vm.showCatalog() }
                 )
                 is ScanUiState.Scanning -> CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center).size(48.dp), color = ViciousRed)

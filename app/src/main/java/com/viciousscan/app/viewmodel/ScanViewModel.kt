@@ -39,6 +39,11 @@ sealed class HistoryUiState {
     data class ViewingEntry(val entry: ScanHistoryEntry) : HistoryUiState()
 }
 
+sealed class CatalogUiState {
+    object Hidden : CatalogUiState()
+    object Showing : CatalogUiState()
+}
+
 sealed class ExportUiState {
     object Idle : ExportUiState()
     data class Done(val content: String, val fileName: String) : ExportUiState()
@@ -58,6 +63,9 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
 
     private val _historyState = MutableStateFlow<HistoryUiState>(HistoryUiState.Hidden)
     val historyState: StateFlow<HistoryUiState> = _historyState
+
+    private val _catalogState = MutableStateFlow<CatalogUiState>(CatalogUiState.Hidden)
+    val catalogState: StateFlow<CatalogUiState> = _catalogState
 
     private val _exportState = MutableStateFlow<ExportUiState>(ExportUiState.Idle)
     val exportState: StateFlow<ExportUiState> = _exportState
@@ -178,6 +186,9 @@ class ScanViewModel(app: Application) : AndroidViewModel(app) {
             _patchState.value = PatchUiState.Done(ok, fail)
         }
     }
+
+    fun showCatalog() { _catalogState.value = CatalogUiState.Showing }
+    fun hideCatalog() { _catalogState.value = CatalogUiState.Hidden }
 
     fun showProjectInfo() {
         val ctx = getApplication<Application>()
